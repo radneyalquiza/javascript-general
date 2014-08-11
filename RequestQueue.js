@@ -49,15 +49,10 @@ var RequestQueue = function () {
     this.Count = function () { return this.Requests.length; };
 
     // add 1 request (if the object being added is a Request object)
-    this.AddRequest = function (req) { if (req && req instanceof Request)  this.Requests.push(req); }
+    this.AddRequest = function (req) { if (req && req instanceof Request) this.Requests.push(req); }
 
     // remove 1 request by its index (usually 1st or 0)
-    this.RemoveRequest = function (index) {
-        if (!isNaN(index) && index > -1) {
-            aa("count " + this.Count());
-            this.Requests.splice(index, 1);
-        }
-    }
+    this.RemoveRequest = function (index) { if (!isNaN(index) && index > -1) this.Requests.splice(index, 1); }
 
     // sequentially but asynchronously process ajax requests added onto the Requests array
     this.processRequestQueue = function () {
@@ -66,16 +61,13 @@ var RequestQueue = function () {
             rq.isRunning = true;
             var req = rq.Requests[0]; // always process the first index, then remove it after processing
             rq.seqAjax(req.Data, req.URL, req.Method, req.Async, function (xhr) {
-                aa(xhr);
                 if (xhr) {
                     req.CallBack(xhr);      // outer callback
                     rq.RemoveRequest(0);  // remove first request from queue
-                    if (rq.Count() > 0) {
+                    if (rq.Count() > 0)
                         rq.processRequestQueue();
-                    }
-                    else {
+                    else
                         rq.isRunning = false;
-                    }
                 }
             });
         }
